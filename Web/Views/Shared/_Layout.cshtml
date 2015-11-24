@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Course Central</title>
+
+    <script src="~/Scripts/jQuery/jquery-2.1.4.min.js"></script>
+    <script src="~/Scripts/Bootstrap/bootstrap.min.js"></script>
+    <script src="~/Scripts/Angular/angular.min.js"></script>
+    <script src="~/Scripts/Angular/angular-animate.min.js"></script>
+    <script src="~/Scripts/app/shared/shared.module.js"></script>
+    <script src="~/Scripts/app/shared/promise.service.js"></script>
+    @RenderSection("Scripts", false)
+
+    <link rel="stylesheet" type="text/css" href="~/Content/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/layout.css">
+    @RenderSection("Styles", false)
+</head>
+<body @RenderSection("ngApp", false) class="full-body">
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="~/">Course Central</a>
+        </div>
+        <div>
+            <ul class="nav navbar-nav">
+                <li><a href="~/Students">Students</a></li>
+                <li><a href="~/Courses">Courses</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="body-content container">
+        @RenderBody()
+    </div>
+</body>
+@RenderSection("PostBodyScripts", false)
+</html>

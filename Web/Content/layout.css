@@ -1,0 +1,30 @@
+.body-content {
+    padding-top: 70px;
+}
+
+.full-body {
+    background-color: white;
+}
+
+.top-buffer {
+    margin-top: 10px;
+}
+
+.no-padding {
+    padding: 0px !important;
+}
+
+.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
+
+.loader-text {
+  color: #A5034A;
+  font-weight: bold;
+}
+
+.italic {
+    font-style: italic;
+}
+
+.cap-width {
+    width: 200px !important;
+}
