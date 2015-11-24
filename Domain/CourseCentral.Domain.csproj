@@ -46,12 +46,6 @@
     <Compile Include="Repositories\Domain\SqlServerStudentRepository.cs" />
     <Compile Include="Repositories\StudentRepository.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Database\CourseCentral.Database.sqlproj">
-      <Project>{b354eb82-4004-4391-8eb6-0e2fc888ae6e}</Project>
-      <Name>CourseCentral.Database</Name>
-    </ProjectReference>
-  </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

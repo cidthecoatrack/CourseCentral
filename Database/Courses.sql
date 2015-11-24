@@ -1,6 +1,0 @@
-﻿CREATE TABLE [dbo].[Courses]
-(
-	[Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
-    [Name] NCHAR(1000) NOT NULL, 
-    [Department] NCHAR(4) NOT NULL 
-)
