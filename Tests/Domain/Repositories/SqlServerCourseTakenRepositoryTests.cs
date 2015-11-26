@@ -125,7 +125,12 @@ namespace CourseCentral.Tests.Domain.Repositories
         [Test]
         public void FindNoCoursesTakenByStudent()
         {
-            throw new NotImplementedException();
+            var student = CreateStudent();
+            var firstCourse = CreateCourse();
+            var lastCourse = CreateCourse();
+
+            var coursesTaken = CourseTakenRepository.FindCourses(student.Id);
+            Assert.That(coursesTaken, Is.Empty);
         }
 
         private void AssertCoursesTakenAreEqual(CourseTakenModel actual, CourseTakenModel expected)
@@ -160,7 +165,12 @@ namespace CourseCentral.Tests.Domain.Repositories
         [Test]
         public void FindNoStudentsTakingCourse()
         {
-            throw new NotImplementedException();
+            var course = CreateCourse();
+            var firstStudent = CreateStudent();
+            var lastStudent = CreateStudent();
+
+            var coursesTaken = CourseTakenRepository.FindStudents(course.Id);
+            Assert.That(coursesTaken, Is.Empty);
         }
 
         [Test]
