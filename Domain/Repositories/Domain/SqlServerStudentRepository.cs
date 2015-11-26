@@ -92,10 +92,8 @@ namespace CourseCentral.Domain.Repositories.Domain
         public void Remove(Guid id)
         {
             var sql = @"
-                DELETE FROM CoursesTaken
-                WHERE Student = @Id;
                 DELETE FROM Students
-                WHERE Id = @Id;";
+                WHERE Id = @Id";
 
             var parameter = new SqlParameter("@Id", id);
 

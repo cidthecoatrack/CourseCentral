@@ -14,6 +14,8 @@ namespace CourseCentral.Tests.Domain.Repositories
         [Inject]
         public StudentRepository StudentRepository { get; set; }
         [Inject]
+        public CourseRepository CourseRepository { get; set; }
+        [Inject]
         public CourseTakenRepository CourseTakenRepository { get; set; }
         [Inject]
         public Random Random { get; set; }
@@ -43,78 +45,46 @@ namespace CourseCentral.Tests.Domain.Repositories
                 INSERT INTO Students (Id, FirstName, MiddleName, LastName, Suffix, DateOfBirth)
                 VALUES (@Id, @FirstName, @MiddleName, @LastName, @Suffix, @DateOfBirth)";
 
-            var newId = Guid.NewGuid();
-            var newFirstName = String.Format("First Name {0}", newId);
-            var newMiddleName = String.Format("Middle Name {0}", newId);
-            var newLastName = String.Format("Last Name {0}", newId);
-            var newSuffix = String.Format("Suffix {0}", newId);
-            var newDateOfBirth = DateTime.Now.Date;
+            var student = new StudentModel();
+            student.Id = Guid.NewGuid();
+            student.FirstName = String.Format("First Name {0}", student.Id);
+            student.MiddleName = String.Format("Middle Name {0}", student.Id);
+            student.LastName = String.Format("Last Name {0}", student.Id);
+            student.Suffix = String.Format("Suffix {0}", student.Id);
+            student.DateOfBirth = DateTime.Now.Date;
 
             var parameters = new[]
             {
-                new SqlParameter("@Id", newId),
-                new SqlParameter("@FirstName", newFirstName),
-                new SqlParameter("@MiddleName", newMiddleName),
-                new SqlParameter("@LastName", newLastName),
-                new SqlParameter("@Suffix", newSuffix),
-                new SqlParameter("@DateOfBirth", newDateOfBirth)
+                new SqlParameter("@Id", student.Id),
+                new SqlParameter("@FirstName", student.FirstName),
+                new SqlParameter("@MiddleName", student.MiddleName),
+                new SqlParameter("@LastName", student.LastName),
+                new SqlParameter("@Suffix", student.Suffix),
+                new SqlParameter("@DateOfBirth", student.DateOfBirth)
             };
 
             using (var connection = GetAndOpenConnection())
             using (var command = GetCommand(sql, connection, parameters))
                 command.ExecuteNonQuery();
 
-            return new StudentModel
-            {
-                Id = newId,
-                FirstName = newFirstName,
-                MiddleName = newMiddleName,
-                LastName = newLastName,
-                Suffix = newSuffix,
-                DateOfBirth = newDateOfBirth
-            };
+            return student;
         }
 
         private CourseModel CreateCourse()
         {
-            var sql = @"
-                INSERT INTO Courses (Id, Name, Department, Number, Professor, Year, Semester)
-                VALUES (@Id, @Name, @Department, @Number, @Professor, @Year, @Semester)";
+            var course = new CourseModel();
+            course.Id = Guid.NewGuid();
+            course.Name = String.Format("Name {0}", course.Id);
+            course.Department = "DEPT";
+            course.Number = Random.Next(1000, 10000);
+            course.Professor = String.Format("Professor {0}", course.Id);
+            course.Year = DateTime.Now.Year;
+            course.Semester = "FALL";
+            course.Section = 'A';
 
-            var newId = Guid.NewGuid();
-            var newName = String.Format("Name {0}", newId);
-            var newDepartment = "DEPT";
-            var newNumber = Random.Next(1000, 10000);
-            var newProfessor = String.Format("Professor {0}", newId);
-            var newYear = DateTime.Now.Year;
-            var newSemester = "FALL";
+            CourseRepository.Add(course);
 
-            var parameters = new[]
-            {
-                new SqlParameter("@Id", newId),
-                new SqlParameter("@Name", newName),
-                new SqlParameter("@Department", newDepartment),
-                new SqlParameter("@Number", newNumber),
-                new SqlParameter("@Professor", newProfessor),
-                new SqlParameter("@Year", newYear),
-                new SqlParameter("@Semester", newSemester)
-            };
-
-            using (var connection = GetAndOpenConnection())
-            using (var command = GetCommand(sql, connection, parameters))
-                command.ExecuteNonQuery();
-
-            return new CourseModel
-            {
-                Id = newId,
-                Name = newName,
-                Department = newDepartment,
-                Number = newNumber,
-                Professor = newProfessor,
-                Year = newYear,
-                Section = 'A',
-                Semester = newSemester
-            };
+            return course;
         }
 
         [Test]
@@ -152,7 +122,14 @@ namespace CourseCentral.Tests.Domain.Repositories
             var students = StudentRepository.FindAll();
 
             foreach (var student in students)
+            {
+                var coursesTaken = CourseTakenRepository.FindCourses(student.Id);
+
+                foreach (var courseTaken in coursesTaken)
+                    CourseTakenRepository.Remove(courseTaken);
+
                 StudentRepository.Remove(student.Id);
+            }
 
             students = StudentRepository.FindAll();
             Assert.That(students, Is.Empty);
@@ -209,19 +186,22 @@ namespace CourseCentral.Tests.Domain.Repositories
         }
 
         [Test]
-        public void RemoveAStudentEnrolledInClasses()
+        public void CannotRemoveAStudentEnrolledInClasses()
         {
             var newStudent = CreateStudent();
             var newCourse = CreateCourse();
-            var courseTaken = new CourseTakenModel { Student = newStudent.Id, Course = newCourse.Id, Grade = 9266 };
-            CourseTakenRepository.Add(courseTaken);
+            var newCourseTaken = new CourseTakenModel { Student = newStudent.Id, Course = newCourse.Id, Grade = 9266 };
+            CourseTakenRepository.Add(newCourseTaken);
 
-            StudentRepository.Remove(newStudent.Id);
+            Assert.That(() => StudentRepository.Remove(newStudent.Id), Throws.Exception);
 
-            Assert.That(() => StudentRepository.Find(newStudent.Id), Throws.Exception);
+            var student = StudentRepository.Find(newStudent.Id);
+            AssertStudentsAreEqual(student, newStudent);
 
-            var coursesTaken = CourseTakenRepository.FindCourses(newStudent.Id);
-            Assert.That(coursesTaken, Is.Empty);
+            var courseTaken = CourseTakenRepository.Find(newCourseTaken.Student, newCourseTaken.Course);
+            Assert.That(courseTaken.Course, Is.EqualTo(newCourseTaken.Course));
+            Assert.That(courseTaken.Student, Is.EqualTo(newCourseTaken.Student));
+            Assert.That(courseTaken.Grade, Is.EqualTo(newCourseTaken.Grade));
         }
 
         [Test]

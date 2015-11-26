@@ -8,8 +8,8 @@ namespace CourseCentral.Domain.Repositories
     {
         CourseModel Find(Guid id);
         IEnumerable<CourseModel> FindAll();
-        void Add(CourseModel student);
-        void Update(CourseModel student);
+        void Add(CourseModel course);
+        void Update(CourseModel course);
         void Remove(Guid id);
     }
 }

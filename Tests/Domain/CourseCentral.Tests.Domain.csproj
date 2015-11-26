@@ -52,6 +52,7 @@
     <Compile Include="DatabaseAttribute.cs" />
     <Compile Include="DatabaseTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\SqlServerCourseRepositoryTests.cs" />
     <Compile Include="Repositories\SqlServerCourseTakenRepositoryTests.cs" />
     <Compile Include="Repositories\SqlServerStudentRepositoryTests.cs" />
   </ItemGroup>
