@@ -20,15 +20,6 @@ namespace CourseCentral.Tests.Domain.Repositories
         [Inject]
         public Random Random { get; set; }
 
-        [Test]
-        public void FindStudent()
-        {
-            var newStudent = CreateStudent();
-
-            var student = StudentRepository.Find(newStudent.Id);
-            AssertStudentsAreEqual(student, newStudent);
-        }
-
         private void AssertStudentsAreEqual(StudentModel actual, StudentModel expected)
         {
             Assert.That(actual.Id, Is.EqualTo(expected.Id));
@@ -88,15 +79,6 @@ namespace CourseCentral.Tests.Domain.Repositories
         }
 
         [Test]
-        public void ThrowExceptionIfStudentCannotBeFound()
-        {
-            var wrongId = Guid.NewGuid();
-            var message = String.Format("No student with ID {0} exists", wrongId);
-
-            Assert.That(() => StudentRepository.Find(wrongId), Throws.InstanceOf<InvalidOperationException>().With.Message.EqualTo(message));
-        }
-
-        [Test]
         public void FindAllStudents()
         {
             var firstNewStudent = CreateStudent();
@@ -148,7 +130,8 @@ namespace CourseCentral.Tests.Domain.Repositories
 
             StudentRepository.Add(newStudent);
 
-            var student = StudentRepository.Find(newStudent.Id);
+            var students = StudentRepository.FindAll();
+            var student = students.First(s => s.Id == newStudent.Id);
             AssertStudentsAreEqual(student, newStudent);
         }
 
@@ -173,7 +156,8 @@ namespace CourseCentral.Tests.Domain.Repositories
 
             StudentRepository.Add(newStudent);
 
-            var student = StudentRepository.Find(newStudent.Id);
+            var students = StudentRepository.FindAll();
+            var student = students.First(s => s.Id == newStudent.Id);
             AssertStudentsAreEqual(student, newStudent);
         }
 
@@ -182,7 +166,10 @@ namespace CourseCentral.Tests.Domain.Repositories
         {
             var newStudent = CreateStudent();
             StudentRepository.Remove(newStudent.Id);
-            Assert.That(() => StudentRepository.Find(newStudent.Id), Throws.Exception);
+
+            var students = StudentRepository.FindAll();
+            var studentIds = students.Select(s => s.Id);
+            Assert.That(studentIds, Is.All.Not.EqualTo(newStudent.Id));
         }
 
         [Test]
@@ -190,15 +177,23 @@ namespace CourseCentral.Tests.Domain.Repositories
         {
             var newStudent = CreateStudent();
             var newCourse = CreateCourse();
-            var newCourseTaken = new CourseTakenModel { Student = newStudent.Id, Course = newCourse.Id, Grade = 9266 };
+            var newCourseTaken = new CourseTakenModel { Student = newStudent.Id, Course = newCourse.Id, Grade = Random.Next() };
             CourseTakenRepository.Add(newCourseTaken);
 
             Assert.That(() => StudentRepository.Remove(newStudent.Id), Throws.Exception);
 
-            var student = StudentRepository.Find(newStudent.Id);
+            var students = StudentRepository.FindAll();
+            var student = students.First(s => s.Id == newStudent.Id);
             AssertStudentsAreEqual(student, newStudent);
 
-            var courseTaken = CourseTakenRepository.Find(newCourseTaken.Student, newCourseTaken.Course);
+            var coursesTaken = CourseTakenRepository.FindCourses(newCourseTaken.Student);
+            var courseTaken = coursesTaken.First(c => c.Course == newCourseTaken.Course);
+            Assert.That(courseTaken.Course, Is.EqualTo(newCourseTaken.Course));
+            Assert.That(courseTaken.Student, Is.EqualTo(newCourseTaken.Student));
+            Assert.That(courseTaken.Grade, Is.EqualTo(newCourseTaken.Grade));
+
+            coursesTaken = CourseTakenRepository.FindStudents(newCourseTaken.Course);
+            courseTaken = coursesTaken.First(c => c.Student == newCourseTaken.Student);
             Assert.That(courseTaken.Course, Is.EqualTo(newCourseTaken.Course));
             Assert.That(courseTaken.Student, Is.EqualTo(newCourseTaken.Student));
             Assert.That(courseTaken.Grade, Is.EqualTo(newCourseTaken.Grade));
@@ -209,7 +204,10 @@ namespace CourseCentral.Tests.Domain.Repositories
         {
             var wrongId = Guid.NewGuid();
             StudentRepository.Remove(wrongId);
-            Assert.That(() => StudentRepository.Find(wrongId), Throws.Exception);
+
+            var students = StudentRepository.FindAll();
+            var studentIds = students.Select(s => s.Id);
+            Assert.That(studentIds, Is.All.Not.EqualTo(wrongId));
         }
 
         [Test]
@@ -224,7 +222,8 @@ namespace CourseCentral.Tests.Domain.Repositories
 
             StudentRepository.Update(newStudent);
 
-            var student = StudentRepository.Find(newStudent.Id);
+            var students = StudentRepository.FindAll();
+            var student = students.First(s => s.Id == newStudent.Id);
             AssertStudentsAreEqual(student, newStudent);
         }
 
@@ -235,7 +234,8 @@ namespace CourseCentral.Tests.Domain.Repositories
 
             StudentRepository.Update(newStudent);
 
-            var student = StudentRepository.Find(newStudent.Id);
+            var students = StudentRepository.FindAll();
+            var student = students.First(s => s.Id == newStudent.Id);
             AssertStudentsAreEqual(student, newStudent);
         }
 

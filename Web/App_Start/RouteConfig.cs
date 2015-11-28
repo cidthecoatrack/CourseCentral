@@ -10,9 +10,27 @@ namespace CourseCentral.Web
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
-                name: "Default",
-                url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+                name: "Views",
+                url: "{controller}",
+                defaults: new { controller = "Home", action = "Index" }
+            );
+
+            routes.MapRoute(
+                name: "Students",
+                url: "Students/{action}",
+                defaults: new { controller = "Students", action = "Index" }
+            );
+
+            routes.MapRoute(
+                name: "Courses",
+                url: "Courses/{action}",
+                defaults: new { controller = "Courses", action = "Index" }
+            );
+
+            routes.MapRoute(
+                name: "CoursesTaken",
+                url: "CoursesTaken/{action}/{id}",
+                defaults: new { controller = "CoursesTaken", action = "Student", id = UrlParameter.Optional }
             );
         }
     }

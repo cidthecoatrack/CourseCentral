@@ -20,11 +20,8 @@ CREATE TABLE Courses
 	Professor NVARCHAR(1000) NOT NULL,
 	Year INT NOT NULL,
 	Semester NVARCHAR(6) NOT NULL,
-	CONSTRAINT checkDepartmentCasing CHECK (Department = UPPER(Department)),
-	CONSTRAINT checkSectionCasing CHECK (Section = UPPER(Section)),
 	CONSTRAINT courseNumber UNIQUE (Department, Number, Section, Year, Semester),
-	CONSTRAINT checkSemester CHECK (Semester = 'FALL' OR Semester = 'SPRING' OR Semester = 'SUMMER'),
-	CONSTRAINT checkSemesterCasing CHECK (Semester = UPPER(Semester))
+	CONSTRAINT checkSemester CHECK (Semester = 'FALL' OR Semester = 'SPRING' OR Semester = 'SUMMER')
 )
 
 CREATE TABLE CoursesTaken

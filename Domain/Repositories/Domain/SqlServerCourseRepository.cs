@@ -35,38 +35,6 @@ namespace CourseCentral.Domain.Repositories.Domain
                 command.ExecuteNonQuery();
         }
 
-        public CourseModel Find(Guid id)
-        {
-            var sql = @"SELECT *
-                        FROM Courses
-                        WHERE Id = @Id";
-
-            var parameter = new SqlParameter("@Id", id);
-
-            using (var connection = GetAndOpenConnection())
-            using (var command = GetCommand(sql, connection, parameter))
-            using (var reader = command.ExecuteReader())
-            {
-                if (reader.Read() == false)
-                {
-                    var message = String.Format("No course with ID {0} exists", id);
-                    throw new InvalidOperationException(message);
-                }
-
-                var course = new CourseModel();
-                course.Department = Convert.ToString(reader["Department"]);
-                course.Id = Guid.Parse(Convert.ToString(reader["Id"]));
-                course.Name = Convert.ToString(reader["Name"]);
-                course.Number = Convert.ToInt32(reader["Number"]);
-                course.Professor = Convert.ToString(reader["Professor"]);
-                course.Section = Convert.ToChar(reader["Section"]);
-                course.Semester = Convert.ToString(reader["Semester"]);
-                course.Year = Convert.ToInt32(reader["Year"]);
-
-                return course;
-            }
-        }
-
         public IEnumerable<CourseModel> FindAll()
         {
             var sql = @"SELECT * FROM Courses";

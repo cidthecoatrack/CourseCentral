@@ -51,6 +51,10 @@
     <Compile Include="Repositories\Domain\SqlServerCourseTakenRepository.cs" />
     <Compile Include="Repositories\Domain\SqlServerStudentRepository.cs" />
     <Compile Include="Repositories\StudentRepository.cs" />
+    <Compile Include="Services\CourseService.cs" />
+    <Compile Include="Services\Domain\DomainCourseService.cs" />
+    <Compile Include="Services\Domain\DomainStudentService.cs" />
+    <Compile Include="Services\StudentService.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

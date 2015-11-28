@@ -33,36 +33,6 @@ namespace CourseCentral.Domain.Repositories.Domain
                 command.ExecuteNonQuery();
         }
 
-        public StudentModel Find(Guid id)
-        {
-            var sql = @"SELECT *
-                        FROM Students
-                        WHERE Id = @Id";
-
-            var parameter = new SqlParameter("@Id", id);
-
-            using (var connection = GetAndOpenConnection())
-            using (var command = GetCommand(sql, connection, parameter))
-            using (var reader = command.ExecuteReader())
-            {
-                if (reader.Read() == false)
-                {
-                    var message = String.Format("No student with ID {0} exists", id);
-                    throw new InvalidOperationException(message);
-                }
-
-                var student = new StudentModel();
-                student.DateOfBirth = Convert.ToDateTime(reader["DateOfBirth"]);
-                student.FirstName = Convert.ToString(reader["FirstName"]);
-                student.Id = Guid.Parse(Convert.ToString(reader["Id"]));
-                student.LastName = Convert.ToString(reader["LastName"]);
-                student.MiddleName = Convert.ToString(reader["MiddleName"]);
-                student.Suffix = Convert.ToString(reader["Suffix"]);
-
-                return student;
-            }
-        }
-
         public IEnumerable<StudentModel> FindAll()
         {
             var sql = @"SELECT * FROM Students";

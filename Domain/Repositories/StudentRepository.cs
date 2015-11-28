@@ -6,7 +6,6 @@ namespace CourseCentral.Domain.Repositories
 {
     public interface StudentRepository
     {
-        StudentModel Find(Guid id);
         IEnumerable<StudentModel> FindAll();
         void Add(StudentModel student);
         void Update(StudentModel student);

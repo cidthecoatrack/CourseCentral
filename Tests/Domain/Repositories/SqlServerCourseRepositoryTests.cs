@@ -20,15 +20,6 @@ namespace CourseCentral.Tests.Domain.Repositories
         [Inject]
         public Random Random { get; set; }
 
-        [Test]
-        public void FindCourse()
-        {
-            var newCourse = CreateCourse();
-
-            var course = CourseRepository.Find(newCourse.Id);
-            AssertCoursesAreEqual(course, newCourse);
-        }
-
         private void AssertCoursesAreEqual(CourseModel actual, CourseModel expected)
         {
             Assert.That(actual.Id, Is.EqualTo(expected.Id));
@@ -62,7 +53,7 @@ namespace CourseCentral.Tests.Domain.Repositories
             course.Id = Guid.NewGuid();
             course.Name = String.Format("Name {0}", course.Id);
             course.Department = "DEPT";
-            course.Number = Random.Next(1000, 10000);
+            course.Number = Random.Next();
             course.Professor = String.Format("Professor {0}", course.Id);
             course.Year = DateTime.Now.Year;
             course.Semester = "FALL";
@@ -89,15 +80,6 @@ namespace CourseCentral.Tests.Domain.Repositories
                 command.ExecuteNonQuery();
 
             return course;
-        }
-
-        [Test]
-        public void ThrowExceptionIfCourseCannotBeFound()
-        {
-            var wrongId = Guid.NewGuid();
-            var message = String.Format("No course with ID {0} exists", wrongId);
-
-            Assert.That(() => CourseRepository.Find(wrongId), Throws.InstanceOf<InvalidOperationException>().With.Message.EqualTo(message));
         }
 
         [Test]
@@ -144,9 +126,9 @@ namespace CourseCentral.Tests.Domain.Repositories
         {
             var newCourse = new CourseModel();
             newCourse.Id = Guid.NewGuid();
-            newCourse.Name = String.Format("Name {0}", newCourse.Id);
+            newCourse.Name = "Add Course";
             newCourse.Department = "DEPT";
-            newCourse.Number = Random.Next(1000, 10000);
+            newCourse.Number = Random.Next();
             newCourse.Professor = String.Format("Professor {0}", newCourse.Id);
             newCourse.Year = DateTime.Now.Year;
             newCourse.Semester = "SPRING";
@@ -154,7 +136,8 @@ namespace CourseCentral.Tests.Domain.Repositories
 
             CourseRepository.Add(newCourse);
 
-            var course = CourseRepository.Find(newCourse.Id);
+            var courses = CourseRepository.FindAll();
+            var course = courses.First(c => c.Id == newCourse.Id);
             AssertCoursesAreEqual(course, newCourse);
         }
 
@@ -162,9 +145,9 @@ namespace CourseCentral.Tests.Domain.Repositories
         public void CannotAddDuplicateCourseId()
         {
             var course = CreateCourse();
-            course.Name = Guid.NewGuid().ToString();
+            course.Name = "Duplicate Course ID";
             course.Department = "MUSC";
-            course.Number = Random.Next(1000, 10000);
+            course.Number = Random.Next();
             course.Professor = Guid.NewGuid().ToString();
             course.Year = 1989;
             course.Semester = "SUMMER";
@@ -174,14 +157,12 @@ namespace CourseCentral.Tests.Domain.Repositories
         }
 
         [Test]
-        public void CannotAddDuplicateCourseNumber()
+        public void CannotAddDuplicateCourseNumberForYearAndSemester()
         {
             var course = CreateCourse();
             course.Id = Guid.NewGuid();
-            course.Name = Guid.NewGuid().ToString();
+            course.Name = "Duplicate Course Number For Year And Semester";
             course.Professor = Guid.NewGuid().ToString();
-            course.Year = 1989;
-            course.Semester = "SUMMER";
 
             Assert.That(() => CourseRepository.Add(course), Throws.Exception);
         }
@@ -191,22 +172,44 @@ namespace CourseCentral.Tests.Domain.Repositories
         {
             var newCourse = CreateCourse();
             newCourse.Id = Guid.NewGuid();
+            newCourse.Name = "Non-Duplicate Course ID";
             newCourse.Department = "ASDF";
-            newCourse.Number = Random.Next(1000, 10000);
-            newCourse.Section = 'X';
 
             CourseRepository.Add(newCourse);
 
-            var course = CourseRepository.Find(newCourse.Id);
+            var courses = CourseRepository.FindAll();
+            var course = courses.First(c => c.Id == newCourse.Id);
             AssertCoursesAreEqual(course, newCourse);
+        }
+
+        [Test]
+        public void SemesterMustBeRealSemester()
+        {
+            var newCourse = CreateCourse();
+            newCourse.Id = Guid.NewGuid();
+            newCourse.Department = "ASDF";
+            newCourse.Number = Random.Next();
+            newCourse.Section = 'X';
+            newCourse.Semester = "WINTER";
+            newCourse.Name = "Winter Semester Course";
+
+            Assert.That(() => CourseRepository.Add(newCourse), Throws.Exception);
+
+            var courses = CourseRepository.FindAll();
+            var courseIds = courses.Select(c => c.Id);
+            Assert.That(courseIds, Is.All.Not.EqualTo(newCourse.Id));
         }
 
         [Test]
         public void RemoveACourse()
         {
             var newCourse = CreateCourse();
+
             CourseRepository.Remove(newCourse.Id);
-            Assert.That(() => CourseRepository.Find(newCourse.Id), Throws.Exception);
+
+            var courses = CourseRepository.FindAll();
+            var courseIds = courses.Select(c => c.Id);
+            Assert.That(courseIds, Is.All.Not.EqualTo(newCourse.Id));
         }
 
         [Test]
@@ -219,10 +222,18 @@ namespace CourseCentral.Tests.Domain.Repositories
 
             Assert.That(() => CourseRepository.Remove(newCourse.Id), Throws.Exception);
 
-            var course = CourseRepository.Find(newCourse.Id);
+            var courses = CourseRepository.FindAll();
+            var course = courses.First(c => c.Id == newCourse.Id);
             AssertCoursesAreEqual(course, newCourse);
 
-            var courseTaken = CourseTakenRepository.Find(newCourseTaken.Student, newCourseTaken.Course);
+            var coursesTaken = CourseTakenRepository.FindCourses(newCourseTaken.Student);
+            var courseTaken = coursesTaken.First(c => c.Course == newCourseTaken.Course);
+            Assert.That(courseTaken.Course, Is.EqualTo(newCourseTaken.Course));
+            Assert.That(courseTaken.Student, Is.EqualTo(newCourseTaken.Student));
+            Assert.That(courseTaken.Grade, Is.EqualTo(newCourseTaken.Grade));
+
+            coursesTaken = CourseTakenRepository.FindStudents(newCourseTaken.Course);
+            courseTaken = coursesTaken.First(c => c.Student == newCourseTaken.Student);
             Assert.That(courseTaken.Course, Is.EqualTo(newCourseTaken.Course));
             Assert.That(courseTaken.Student, Is.EqualTo(newCourseTaken.Student));
             Assert.That(courseTaken.Grade, Is.EqualTo(newCourseTaken.Grade));
@@ -232,8 +243,12 @@ namespace CourseCentral.Tests.Domain.Repositories
         public void RemoveANonexistantCourse()
         {
             var wrongId = Guid.NewGuid();
+
             CourseRepository.Remove(wrongId);
-            Assert.That(() => CourseRepository.Find(wrongId), Throws.Exception);
+
+            var courses = CourseRepository.FindAll();
+            var courseIds = courses.Select(c => c.Id);
+            Assert.That(courseIds, Is.All.Not.EqualTo(wrongId));
         }
 
         [Test]
@@ -242,7 +257,7 @@ namespace CourseCentral.Tests.Domain.Repositories
             var newCourse = CreateCourse();
             newCourse.Name = "new name";
             newCourse.Department = "ASDF";
-            newCourse.Number = Random.Next(1000, 10000);
+            newCourse.Number = Random.Next();
             newCourse.Professor = "new professor";
             newCourse.Year = 1989;
             newCourse.Semester = "SUMMER";
@@ -250,7 +265,8 @@ namespace CourseCentral.Tests.Domain.Repositories
 
             CourseRepository.Update(newCourse);
 
-            var course = CourseRepository.Find(newCourse.Id);
+            var courses = CourseRepository.FindAll();
+            var course = courses.First(c => c.Id == newCourse.Id);
             AssertCoursesAreEqual(course, newCourse);
         }
 
@@ -261,7 +277,8 @@ namespace CourseCentral.Tests.Domain.Repositories
 
             CourseRepository.Update(newCourse);
 
-            var course = CourseRepository.Find(newCourse.Id);
+            var courses = CourseRepository.FindAll();
+            var course = courses.First(c => c.Id == newCourse.Id);
             AssertCoursesAreEqual(course, newCourse);
         }
 
@@ -272,7 +289,7 @@ namespace CourseCentral.Tests.Domain.Repositories
             newCourse.Id = Guid.NewGuid();
             newCourse.Name = "new name";
             newCourse.Department = "ASDF";
-            newCourse.Number = Random.Next(1000, 10000);
+            newCourse.Number = Random.Next();
             newCourse.Professor = "new professor";
             newCourse.Year = 1989;
             newCourse.Semester = "SUMMER";
@@ -286,19 +303,18 @@ namespace CourseCentral.Tests.Domain.Repositories
         }
 
         [Test]
-        public void DoNotUpdateWithDuplicateCourseNumber()
+        public void DoNotUpdateWithDuplicateCourseNumberInYearAndSemester()
         {
             var courses = CourseRepository.FindAll();
             var firstCourse = courses.First();
 
             var newCourse = CreateCourse();
-            newCourse.Id = Guid.NewGuid();
-            newCourse.Name = "new name";
+            newCourse.Name = "Duplicate Course Number in Year and Semester";
             newCourse.Department = firstCourse.Department;
             newCourse.Number = firstCourse.Number;
             newCourse.Professor = "new professor";
-            newCourse.Year = 1989;
-            newCourse.Semester = "SUMMER";
+            newCourse.Year = firstCourse.Year;
+            newCourse.Semester = firstCourse.Semester;
             newCourse.Section = firstCourse.Section;
 
             Assert.That(() => CourseRepository.Update(newCourse), Throws.Exception);

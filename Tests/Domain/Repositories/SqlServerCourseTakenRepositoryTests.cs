@@ -20,15 +20,14 @@ namespace CourseCentral.Tests.Domain.Repositories
         [Inject]
         public Random Random { get; set; }
 
-        [Test]
-        public void FindCourseTaken()
-        {
-            var student = CreateStudent();
-            var course = CreateCourse();
-            var newCourseTaken = CreateCourseTaken(student.Id, course.Id);
+        private StudentModel student;
+        private CourseModel course;
 
-            var courseTaken = CourseTakenRepository.Find(newCourseTaken.Student, newCourseTaken.Course);
-            AssertCoursesTakenAreEqual(courseTaken, newCourseTaken);
+        [SetUp]
+        public void Setup()
+        {
+            student = CreateStudent();
+            course = CreateCourse();
         }
 
         private StudentModel CreateStudent()
@@ -52,7 +51,7 @@ namespace CourseCentral.Tests.Domain.Repositories
             course.Id = Guid.NewGuid();
             course.Name = String.Format("Name {0}", course.Id);
             course.Department = "DEPT";
-            course.Number = Random.Next(1000, 10000);
+            course.Number = Random.Next();
             course.Professor = String.Format("Professor {0}", course.Id);
             course.Year = DateTime.Now.Year;
             course.Semester = "FALL";
@@ -91,23 +90,11 @@ namespace CourseCentral.Tests.Domain.Repositories
         }
 
         [Test]
-        public void DoNotFindCourseTakenByStudent()
-        {
-            var student = CreateStudent();
-            var wrongId = Guid.NewGuid();
-            var message = String.Format("Student {0} is not enrolled in course {1}", wrongId);
-
-            Assert.That(() => CourseTakenRepository.Find(student.Id, wrongId), Throws.InstanceOf<InvalidOperationException>().With.Message.EqualTo(message));
-        }
-
-        [Test]
         public void FindCoursesTakenByStudent()
         {
-            var student = CreateStudent();
-            var firstCourse = CreateCourse();
-            var lastCourse = CreateCourse();
-            var firstNewCourseTaken = CreateCourseTaken(student.Id, firstCourse.Id);
-            var secondNewCourseTaken = CreateCourseTaken(student.Id, lastCourse.Id);
+            var otherCourse = CreateCourse();
+            var firstNewCourseTaken = CreateCourseTaken(student.Id, course.Id);
+            var secondNewCourseTaken = CreateCourseTaken(student.Id, otherCourse.Id);
 
             var coursesTaken = CourseTakenRepository.FindCourses(student.Id);
             Assert.That(coursesTaken, Is.Not.Empty);
@@ -125,9 +112,7 @@ namespace CourseCentral.Tests.Domain.Repositories
         [Test]
         public void FindNoCoursesTakenByStudent()
         {
-            var student = CreateStudent();
-            var firstCourse = CreateCourse();
-            var lastCourse = CreateCourse();
+            var otherCourse = CreateCourse();
 
             var coursesTaken = CourseTakenRepository.FindCourses(student.Id);
             Assert.That(coursesTaken, Is.Empty);
@@ -143,11 +128,9 @@ namespace CourseCentral.Tests.Domain.Repositories
         [Test]
         public void FindStudentsTakingCourse()
         {
-            var course = CreateCourse();
-            var firstStudent = CreateStudent();
-            var lastStudent = CreateStudent();
-            var firstNewCourseTaken = CreateCourseTaken(firstStudent.Id, course.Id);
-            var secondNewCourseTaken = CreateCourseTaken(lastStudent.Id, course.Id);
+            var otherStudent = CreateStudent();
+            var firstNewCourseTaken = CreateCourseTaken(student.Id, course.Id);
+            var secondNewCourseTaken = CreateCourseTaken(otherStudent.Id, course.Id);
 
             var coursesTaken = CourseTakenRepository.FindStudents(course.Id);
             Assert.That(coursesTaken, Is.Not.Empty);
@@ -165,9 +148,7 @@ namespace CourseCentral.Tests.Domain.Repositories
         [Test]
         public void FindNoStudentsTakingCourse()
         {
-            var course = CreateCourse();
-            var firstStudent = CreateStudent();
-            var lastStudent = CreateStudent();
+            var otherStudent = CreateStudent();
 
             var coursesTaken = CourseTakenRepository.FindStudents(course.Id);
             Assert.That(coursesTaken, Is.Empty);
@@ -176,9 +157,6 @@ namespace CourseCentral.Tests.Domain.Repositories
         [Test]
         public void AddCourseTaken()
         {
-            var student = CreateStudent();
-            var course = CreateCourse();
-
             var newCourseTaken = new CourseTakenModel
             {
                 Student = student.Id,
@@ -188,15 +166,18 @@ namespace CourseCentral.Tests.Domain.Repositories
 
             CourseTakenRepository.Add(newCourseTaken);
 
-            var courseTaken = CourseTakenRepository.Find(student.Id, course.Id);
+            var coursesTaken = CourseTakenRepository.FindCourses(newCourseTaken.Student);
+            var courseTaken = coursesTaken.First(c => c.Course == newCourseTaken.Course);
+            AssertCoursesTakenAreEqual(courseTaken, newCourseTaken);
+
+            coursesTaken = CourseTakenRepository.FindStudents(newCourseTaken.Course);
+            courseTaken = coursesTaken.First(c => c.Student == newCourseTaken.Student);
             AssertCoursesTakenAreEqual(courseTaken, newCourseTaken);
         }
 
         [Test]
         public void CannotTakeSameCourseTwice()
         {
-            var student = CreateStudent();
-            var course = CreateCourse();
             var newCourseTaken = CreateCourseTaken(student.Id, course.Id);
 
             newCourseTaken.Grade = Random.Next();
@@ -207,14 +188,112 @@ namespace CourseCentral.Tests.Domain.Repositories
         [Test]
         public void RemoveCourseTaken()
         {
-            var student = CreateStudent();
-            var course = CreateCourse();
             var newCourseTaken = CreateCourseTaken(student.Id, course.Id);
             newCourseTaken.Grade = Random.Next();
 
             CourseTakenRepository.Remove(newCourseTaken);
 
-            Assert.That(() => CourseTakenRepository.Find(student.Id, course.Id), Throws.Exception);
+            var coursesTaken = CourseTakenRepository.FindCourses(newCourseTaken.Student);
+            Assert.That(coursesTaken, Is.Empty);
+
+            coursesTaken = CourseTakenRepository.FindStudents(newCourseTaken.Course);
+            Assert.That(coursesTaken, Is.Empty);
+        }
+
+        [Test]
+        public void DoNotRemoveInaccurateCourseTaken()
+        {
+            var otherStudent = CreateStudent();
+            var otherCourse = CreateCourse();
+            var newFirstCourseTaken = CreateCourseTaken(student.Id, course.Id);
+            var newSecondCourseTaken = CreateCourseTaken(otherStudent.Id, otherCourse.Id);
+
+            var firstWrongCourseTaken = new CourseTakenModel { Course = newFirstCourseTaken.Course, Student = newSecondCourseTaken.Student };
+            var secondWrongCourseTaken = new CourseTakenModel { Course = newSecondCourseTaken.Course, Student = newFirstCourseTaken.Student };
+
+            CourseTakenRepository.Remove(firstWrongCourseTaken);
+            CourseTakenRepository.Remove(secondWrongCourseTaken);
+
+            var coursesTaken = CourseTakenRepository.FindCourses(student.Id);
+            var courseTaken = coursesTaken.First(c => c.Course == course.Id);
+            AssertCoursesTakenAreEqual(courseTaken, newFirstCourseTaken);
+
+            coursesTaken = CourseTakenRepository.FindStudents(course.Id);
+            courseTaken = coursesTaken.First(c => c.Student == student.Id);
+            AssertCoursesTakenAreEqual(courseTaken, newFirstCourseTaken);
+
+            coursesTaken = CourseTakenRepository.FindCourses(otherStudent.Id);
+            courseTaken = coursesTaken.First(c => c.Course == otherCourse.Id);
+            AssertCoursesTakenAreEqual(courseTaken, newSecondCourseTaken);
+
+            coursesTaken = CourseTakenRepository.FindStudents(otherCourse.Id);
+            courseTaken = coursesTaken.First(c => c.Student == otherStudent.Id);
+            AssertCoursesTakenAreEqual(courseTaken, newSecondCourseTaken);
+        }
+
+        [Test]
+        public void UpdateCourseTaken()
+        {
+            var newCourseTaken = CreateCourseTaken(student.Id, course.Id);
+            newCourseTaken.Grade = Random.Next();
+
+            CourseTakenRepository.Update(newCourseTaken);
+
+            var coursesTaken = CourseTakenRepository.FindCourses(newCourseTaken.Student);
+            var courseTaken = coursesTaken.First(c => c.Course == newCourseTaken.Course);
+            AssertCoursesTakenAreEqual(courseTaken, newCourseTaken);
+
+            coursesTaken = CourseTakenRepository.FindStudents(newCourseTaken.Course);
+            courseTaken = coursesTaken.First(c => c.Student == newCourseTaken.Student);
+            AssertCoursesTakenAreEqual(courseTaken, newCourseTaken);
+        }
+
+        [Test]
+        public void CannotUpdateCourseTakenWithNegativeGrade()
+        {
+            var newCourseTaken = CreateCourseTaken(student.Id, course.Id);
+            newCourseTaken.Grade = -1;
+
+            Assert.That(() => CourseTakenRepository.Update(newCourseTaken), Throws.Exception);
+        }
+
+        [Test]
+        public void GradeCannotBeNegative()
+        {
+            var newCourseTaken = new CourseTakenModel
+            {
+                Student = student.Id,
+                Course = course.Id,
+                Grade = -1
+            };
+
+            Assert.That(() => CourseTakenRepository.Add(newCourseTaken), Throws.Exception);
+        }
+
+        [Test]
+        public void CannotAddCourseTakenWithWrongStudent()
+        {
+            var newCourseTaken = new CourseTakenModel
+            {
+                Student = student.Id,
+                Course = student.Id,
+                Grade = Random.Next()
+            };
+
+            Assert.That(() => CourseTakenRepository.Add(newCourseTaken), Throws.Exception);
+        }
+
+        [Test]
+        public void CannotAddCourseTakenWithWrongCourse()
+        {
+            var newCourseTaken = new CourseTakenModel
+            {
+                Student = course.Id,
+                Course = course.Id,
+                Grade = Random.Next()
+            };
+
+            Assert.That(() => CourseTakenRepository.Add(newCourseTaken), Throws.Exception);
         }
     }
 }
