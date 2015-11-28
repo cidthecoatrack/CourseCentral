@@ -111,13 +111,16 @@
     <Content Include="App.config" />
     <Content Include="Content\jasmine\jasmine.css" />
     <Content Include="Content\jasmine\jasmine_favicon.png" />
-    <Content Include="Scripts\jasmine\boot.js" />
-    <Content Include="Scripts\jasmine\console.js" />
-    <Content Include="Scripts\jasmine\jasmine-html.js" />
-    <Content Include="Scripts\jasmine\jasmine.js" />
+    <Content Include="Scripts\app\shared\guid.service.spec.js" />
+    <Content Include="Scripts\app\student\student.service.spec.js" />
+    <Content Include="Scripts\boot.js" />
+    <Content Include="Scripts\console.js" />
+    <Content Include="Scripts\jasmine-html.js" />
+    <Content Include="Scripts\jasmine.js" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Scripts\chutzpah.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Domain\CourseCentral.Domain.csproj">

@@ -1,0 +1,19 @@
+{
+  "Framework": "jasmine",
+  "RootReferencePathMode": "SettingsFileDirectory",
+  "References": [
+    { "Path": "boot.js" },
+    { "Path": "console.js" },
+    { "Path": "jasmine-html.js" },
+    { "Path": "jasmine.js" },
+    { "Path": "../../../Web/Scripts/jQuery/jquery-2.1.4.js" },
+    { "Path": "../../../Web/Scripts/bootstrap/bootstrap.js" },
+    { "Path": "../../../Web/Scripts/AngularJS/angular.js" },
+    { "Path": "../../../Web/Scripts/AngularJS/angular-mocks.js" },
+    { "Path": "../../../Web/Scripts/UUID/uuid.js" },
+    { "Path": "../../../Web/Scripts/app/shared", "Includes": ["*.module.js"], "Excludes": ["*Resource*"] },
+    { "Path": "../../../Web/Scripts/app/shared", "Includes": ["*.js"], "Excludes": ["*Resource*"] },
+    { "Path": "../../../Web/Scripts/app", "Includes": ["*.module.js"], "Excludes": ["*Resource*"] },
+    { "Path": "../../../Web/Scripts/app", "Includes": ["*.js"], "Excludes": ["*Resource*"] }
+  ]
+}

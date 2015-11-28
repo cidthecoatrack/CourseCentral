@@ -1,6 +1,7 @@
 ﻿using CourseCentral.Domain.Models;
 using CourseCentral.Domain.Repositories;
 using CourseCentral.Domain.Services;
+using CourseCentral.Web.Models;
 using System;
 using System.Web.Mvc;
 
@@ -20,14 +21,9 @@ namespace CourseCentral.Web.Controllers
         [HttpGet]
         public ViewResult Index()
         {
-            return View();
-        }
-
-        [HttpGet]
-        public JsonResult FindAll()
-        {
-            var courses = courseRepository.FindAll();
-            return Json(new { courses = courses }, JsonRequestBehavior.AllowGet);
+            var model = new CoursesModel();
+            model.Courses = courseRepository.FindAll();
+            return View(model);
         }
 
         [HttpPost]

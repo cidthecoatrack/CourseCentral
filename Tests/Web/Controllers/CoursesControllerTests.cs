@@ -2,6 +2,7 @@
 using CourseCentral.Domain.Repositories;
 using CourseCentral.Domain.Services;
 using CourseCentral.Web.Controllers;
+using CourseCentral.Web.Models;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -25,7 +26,6 @@ namespace CourseCentral.Tests.Web.Controllers
         }
 
         [TestCase("Index")]
-        [TestCase("FindAll")]
         public void ActionHandlesGetVerb(String methodName)
         {
             var attributes = AttributeProvider.GetAttributesFor(controller, methodName);
@@ -49,28 +49,27 @@ namespace CourseCentral.Tests.Web.Controllers
         }
 
         [Test]
-        public void FindAllReturnsJsonResult()
+        public void IndexViewHasModel()
         {
-            var result = controller.FindAll();
-            Assert.That(result, Is.InstanceOf<JsonResult>());
+            var result = controller.Index() as ViewResult;
+            Assert.That(result.Model, Is.InstanceOf<CoursesModel>());
         }
 
         [Test]
-        public void FindAllJsonResultAllowsGet()
+        public void IndexViewHasCourses()
         {
-            var result = controller.FindAll() as JsonResult;
-            Assert.That(result.JsonRequestBehavior, Is.EqualTo(JsonRequestBehavior.AllowGet));
-        }
+            var courses = new[]
+            {
+                new CourseModel { Id = Guid.NewGuid() },
+                new CourseModel { Id = Guid.NewGuid() }
+            };
 
-        [Test]
-        public void FindAllReturnsStudents()
-        {
-            var courses = new[] { new CourseModel(), new CourseModel() };
             mockCourseRepository.Setup(r => r.FindAll()).Returns(courses);
 
-            var result = controller.FindAll() as JsonResult;
-            dynamic data = result.Data;
-            Assert.That(data.courses, Is.EqualTo(courses));
+            var result = controller.Index() as ViewResult;
+            var model = result.Model as CoursesModel;
+
+            Assert.That(model.Courses, Is.EqualTo(courses));
         }
 
         [Test]

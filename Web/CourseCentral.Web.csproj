@@ -143,7 +143,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\CoursesModel.cs" />
     <Compile Include="Models\CoursesTakenModel.cs" />
+    <Compile Include="Models\StudentsModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -186,8 +188,11 @@
     <Content Include="Scripts\AngularJS\angular-touch.min.js" />
     <Content Include="Scripts\AngularJS\angular.js" />
     <Content Include="Scripts\AngularJS\angular.min.js" />
+    <Content Include="Scripts\app\shared\guid.service.js" />
     <Content Include="Scripts\app\shared\promise.service.js" />
     <Content Include="Scripts\app\shared\shared.module.js" />
+    <Content Include="Scripts\app\student\student.service.js" />
+    <Content Include="Scripts\app\student\student.module.js" />
     <Content Include="Scripts\Bootstrap\bootstrap.js" />
     <Content Include="Scripts\Bootstrap\bootstrap.min.js" />
     <Content Include="Scripts\AngularJS\errors.json" />
@@ -206,7 +211,7 @@
     <Content Include="Scripts\jQuery\jquery-2.1.4.js" />
     <Content Include="Scripts\jQuery\jquery-2.1.4.min.js" />
     <Content Include="Scripts\jQuery\jquery-2.1.4.min.map" />
-    <Content Include="Scripts\_references.js" />
+    <Content Include="Scripts\UUID\uuid.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -217,6 +222,7 @@
     <Content Include="Views\Web.config" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Scripts\AngularJS\version.json" />
+    <Content Include="Views\Students.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
