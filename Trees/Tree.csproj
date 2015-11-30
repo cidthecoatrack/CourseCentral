@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{807DB23F-17E6-445A-8FF5-C0CB07895D9D}</ProjectGuid>
+    <ProjectGuid>{D768931A-4A11-453D-9AC5-1F7DB690E26E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CourseCentral.IoC</RootNamespace>
-    <AssemblyName>CourseCentral.IoC</AssemblyName>
+    <RootNamespace>Tree</RootNamespace>
+    <AssemblyName>Tree</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,12 +30,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ninject, Version=3.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -45,23 +40,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CourseCentralModuleLoader.cs" />
-    <Compile Include="Modules\DomainModule.cs" />
-    <Compile Include="Modules\TreeModule.cs" />
+    <Compile Include="BinaryTreeParser.cs" />
+    <Compile Include="BinaryTreeSearcher.cs" />
+    <Compile Include="Domain\DomainBinaryTreeParser.cs" />
+    <Compile Include="Domain\DomainBinaryTreeSearcher.cs" />
+    <Compile Include="Domain\DomainTreeIndexRepository.cs" />
+    <Compile Include="Node.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Domain\CourseCentral.Domain.csproj">
-      <Project>{c8036e95-d6dc-4ab4-b040-a458307c0a72}</Project>
-      <Name>CourseCentral.Domain</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Trees\Tree.csproj">
-      <Project>{d768931a-4a11-453d-9ac5-1f7db690e26e}</Project>
-      <Name>Tree</Name>
-    </ProjectReference>
+    <Compile Include="TreeIndexRepository.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

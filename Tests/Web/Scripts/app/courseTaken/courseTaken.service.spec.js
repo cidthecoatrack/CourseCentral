@@ -21,7 +21,7 @@ describe('Course Taken Service', function () {
 
         var promise = courseTakenService.add(courseTaken);
         expect(promise).not.toBeNull();
-        expect(promiseServiceMock.postPromise).toHaveBeenCalledWith('CoursesTaken/Add', body);
+        expect(promiseServiceMock.postPromise).toHaveBeenCalledWith('/CoursesTaken/Add', body);
     });
 
     it('updates a course taken', function () {
@@ -30,7 +30,7 @@ describe('Course Taken Service', function () {
 
         var promise = courseTakenService.update(courseTaken);
         expect(promise).not.toBeNull();
-        expect(promiseServiceMock.postPromise).toHaveBeenCalledWith('CoursesTaken/Update', body);
+        expect(promiseServiceMock.postPromise).toHaveBeenCalledWith('/CoursesTaken/Update', body);
     });
 
     it('removes a course taken', function () {
@@ -39,6 +39,6 @@ describe('Course Taken Service', function () {
 
         var promise = courseTakenService.remove(courseTaken);
         expect(promise).not.toBeNull();
-        expect(promiseServiceMock.postPromise).toHaveBeenCalledWith('CoursesTaken/Remove', body);
+        expect(promiseServiceMock.postPromise).toHaveBeenCalledWith('/CoursesTaken/Remove', body);
     });
 });

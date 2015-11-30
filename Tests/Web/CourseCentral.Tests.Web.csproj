@@ -105,6 +105,7 @@
     <Compile Include="Controllers\CoursesTakenControllerTests.cs" />
     <Compile Include="Controllers\HomeControllerTests.cs" />
     <Compile Include="Controllers\StudentsControllerTests.cs" />
+    <Compile Include="Controllers\TreesControllerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -118,6 +119,8 @@
     <Content Include="Scripts\app\shared\guid.service.spec.js" />
     <Content Include="Scripts\app\student\student.controller.spec.js" />
     <Content Include="Scripts\app\student\student.service.spec.js" />
+    <Content Include="Scripts\app\tree\tree.controller.spec.js" />
+    <Content Include="Scripts\app\tree\tree.service.spec.js" />
     <Content Include="Scripts\boot.js" />
     <Content Include="Scripts\console.js" />
     <Content Include="Scripts\jasmine-html.js" />
@@ -131,6 +134,10 @@
     <ProjectReference Include="..\..\Domain\CourseCentral.Domain.csproj">
       <Project>{c8036e95-d6dc-4ab4-b040-a458307c0a72}</Project>
       <Name>CourseCentral.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Trees\Tree.csproj">
+      <Project>{d768931a-4a11-453d-9ac5-1f7db690e26e}</Project>
+      <Name>Tree</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Web\CourseCentral.Web.csproj">
       <Project>{E65D310A-3B4F-41FA-ADF9-6AAFF4B8729C}</Project>

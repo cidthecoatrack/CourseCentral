@@ -16,27 +16,15 @@ namespace CourseCentral.Web
             );
 
             routes.MapRoute(
-                name: "Students",
-                url: "Students/{action}",
-                defaults: new { controller = "Students", action = "Index" }
-            );
-
-            routes.MapRoute(
-                name: "Courses",
-                url: "Courses/{action}",
-                defaults: new { controller = "Courses", action = "Index" }
-            );
-
-            routes.MapRoute(
-                name: "CoursesTaken",
-                url: "CoursesTaken/{action}",
-                defaults: new { controller = "CoursesTaken", action = "Add" }
-            );
-
-            routes.MapRoute(
                 name: "CoursesTakenViews",
                 url: "CoursesTaken/{action}/{id}",
                 defaults: new { controller = "CoursesTaken", action = "Student" }
+            );
+
+            routes.MapRoute(
+                name: "TreesSearch",
+                url: "Trees/Search/{tree}/{query}",
+                defaults: new { controller = "Trees", action = "Search" }
             );
         }
     }

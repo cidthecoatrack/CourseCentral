@@ -5,6 +5,8 @@ using CourseCentral.Domain.Services.Domain;
 using Ninject.Modules;
 using System;
 using System.Configuration;
+using Tree;
+using Tree.Domain;
 
 namespace CourseCentral.IoC.Modules
 {

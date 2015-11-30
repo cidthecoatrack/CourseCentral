@@ -21,7 +21,7 @@ describe('Student Service', function () {
 
         var promise = studentService.add(student);
         expect(promise).not.toBeNull();
-        expect(promiseServiceMock.postPromise).toHaveBeenCalledWith('Students/Add', body);
+        expect(promiseServiceMock.postPromise).toHaveBeenCalledWith('/Students/Add', body);
     });
 
     it('updates a student', function () {
@@ -30,7 +30,7 @@ describe('Student Service', function () {
 
         var promise = studentService.update(student);
         expect(promise).not.toBeNull();
-        expect(promiseServiceMock.postPromise).toHaveBeenCalledWith('Students/Update', body);
+        expect(promiseServiceMock.postPromise).toHaveBeenCalledWith('/Students/Update', body);
     });
 
     it('removes a student', function () {
@@ -38,6 +38,6 @@ describe('Student Service', function () {
 
         var promise = studentService.remove('new guid');
         expect(promise).not.toBeNull();
-        expect(promiseServiceMock.postPromise).toHaveBeenCalledWith('Students/Remove', body);
+        expect(promiseServiceMock.postPromise).toHaveBeenCalledWith('/Students/Remove', body);
     });
 });

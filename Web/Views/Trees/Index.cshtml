@@ -1,0 +1,33 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section ngApp {
+    ng-app='app.tree'
+}
+
+@section Scripts {
+    <script type="text/javascript" src="~/Scripts/app/tree/tree.module.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/tree/tree.service.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/tree/tree.controller.js"></script>
+}
+
+<div ng-controller="Tree as vm">
+    <h1>Binary Tree Search</h1>
+    <form name="binaryTreeForm" role="form">
+        <div class="form-group">
+            <label for="treeInput">Binary Tree</label>
+            <input type="text" id="treeInput" class="form-control" ng-model="vm.tree" required />
+        </div>
+        <div class="form-group">
+            <label for="queryInput">Query</label>
+            <input type="number" class="form-control" id="queryInput" ng-model="vm.query" required />
+        </div>
+        <button class="btn btn-success" ng-click="vm.search()" ng-disabled="binaryTreeForm.$invalid">Search</button>
+    </form>
+    <br /><br />
+    <span ng-show="vm.levels.length == 0">{{vm.query}} cannot be found in the tree</span>
+    <span ng-show="vm.levels.length == 1">{{vm.query}} can be found in the tree on level {{vm.levels[0]}}</span>
+    <span ng-show="vm.levels.length == 2">{{vm.query}} can be found in the tree on levels {{vm.levels[0]}} and {{vm.levels[1]}}</span>
+    <span ng-show="vm.levels.length > 2">{{vm.query}} can be found in the tree on levels <span ng-repeat="level in vm.levels">{{level}}<span ng-show="$index != vm.levels.length - 1">, <span ng-show="$index == vm.levels.length - 2">and </span></span></span></span>
+</div>

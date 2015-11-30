@@ -141,8 +141,10 @@ describe('Course Taken Controller', function () {
             Grade: 42
         });
 
-        expect(vm.coursesTaken[2].Student).toBe(vm.toAssign[0]);
-        expect(vm.coursesTaken[2].Course).toBe(vm.toAssign[1]);
+        expect(vm.coursesTaken[2].Student.Id).toBe('first to assign guid');
+        expect(vm.coursesTaken[2].Student.Name).toBe('first to assign name');
+        expect(vm.coursesTaken[2].Course.Id).toBe('second to assign guid');
+        expect(vm.coursesTaken[2].Course.Name).toBe('second to assign name');
         expect(vm.coursesTaken[2].Grade).toBe(42);
 
         expect(vm.courseTakenInEdit.Student).toBe(vm.student);
@@ -171,8 +173,10 @@ describe('Course Taken Controller', function () {
         vm.edit(1);
 
         expect(vm.editingCourseTaken).toBeTruthy();
-        expect(vm.courseTakenInEdit.Student).toBe(vm.coursesTaken[1].Student);
-        expect(vm.courseTakenInEdit.Course).toBe(vm.coursesTaken[1].Course);
+        expect(vm.courseTakenInEdit.Student.Id).toBe(vm.coursesTaken[1].Student.Id);
+        expect(vm.courseTakenInEdit.Student.Name).toBe(vm.coursesTaken[1].Student.Name);
+        expect(vm.courseTakenInEdit.Course.Id).toBe(vm.coursesTaken[1].Course.Id);
+        expect(vm.courseTakenInEdit.Course.Name).toBe(vm.coursesTaken[1].Course.Name);
         expect(vm.courseTakenInEdit.Grade).toBe(90210);
     });
 
@@ -236,8 +240,10 @@ describe('Course Taken Controller', function () {
         expect(vm.courseTakenInEdit.Course).toBe(vm.course);
         expect(vm.courseTakenInEdit.Grade).toBe(0);
 
-        expect(vm.coursesTaken[1].Student).toBe(vm.toAssign[0]);
-        expect(vm.coursesTaken[1].Course).toBe(vm.toAssign[1]);
+        expect(vm.coursesTaken[1].Student.Id).toBe(vm.toAssign[0].Id);
+        expect(vm.coursesTaken[1].Student.Name).toBe(vm.toAssign[0].Name);
+        expect(vm.coursesTaken[1].Course.Id).toBe(vm.toAssign[1].Id);
+        expect(vm.coursesTaken[1].Course.Name).toBe(vm.toAssign[1].Name);
         expect(vm.coursesTaken[1].Grade).toBe(42);
     });
 

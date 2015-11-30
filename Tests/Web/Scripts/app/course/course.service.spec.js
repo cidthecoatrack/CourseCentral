@@ -21,7 +21,7 @@ describe('Course Service', function () {
 
         var promise = courseService.add(course);
         expect(promise).not.toBeNull();
-        expect(promiseServiceMock.postPromise).toHaveBeenCalledWith('Courses/Add', body);
+        expect(promiseServiceMock.postPromise).toHaveBeenCalledWith('/Courses/Add', body);
     });
 
     it('updates a course', function () {
@@ -30,7 +30,7 @@ describe('Course Service', function () {
 
         var promise = courseService.update(course);
         expect(promise).not.toBeNull();
-        expect(promiseServiceMock.postPromise).toHaveBeenCalledWith('Courses/Update', body);
+        expect(promiseServiceMock.postPromise).toHaveBeenCalledWith('/Courses/Update', body);
     });
 
     it('removes a course', function () {
@@ -38,6 +38,6 @@ describe('Course Service', function () {
 
         var promise = courseService.remove('new guid');
         expect(promise).not.toBeNull();
-        expect(promiseServiceMock.postPromise).toHaveBeenCalledWith('Courses/Remove', body);
+        expect(promiseServiceMock.postPromise).toHaveBeenCalledWith('/Courses/Remove', body);
     });
 });
