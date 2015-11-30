@@ -40,7 +40,12 @@ namespace CourseCentral.Tests.Domain.Services
         [Test]
         public void RemoveStudentEnrolledInAClass()
         {
-            var courseTaken = new CourseTakenModel { Student = studentId, Course = Guid.NewGuid() };
+            var courseTaken = new CourseTakenModel
+            {
+                Student = new NameModel { Id = studentId },
+                Course = new NameModel { Id = Guid.NewGuid() }
+            };
+
             coursesTaken.Add(courseTaken);
 
             service.Remove(studentId);
@@ -53,8 +58,18 @@ namespace CourseCentral.Tests.Domain.Services
         [Test]
         public void RemoveStudentEnrolledInMultipleClasses()
         {
-            var courseTaken = new CourseTakenModel { Student = studentId, Course = Guid.NewGuid() };
-            var otherCourseTaken = new CourseTakenModel { Student = studentId, Course = Guid.NewGuid() };
+            var courseTaken = new CourseTakenModel
+            {
+                Student = new NameModel { Id = studentId },
+                Course = new NameModel { Id = Guid.NewGuid() }
+            };
+
+            var otherCourseTaken = new CourseTakenModel
+            {
+                Student = new NameModel { Id = studentId },
+                Course = new NameModel { Id = Guid.NewGuid() }
+            };
+
             coursesTaken.Add(courseTaken);
             coursesTaken.Add(otherCourseTaken);
 

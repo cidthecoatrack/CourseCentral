@@ -188,9 +188,17 @@
     <Content Include="Scripts\AngularJS\angular-touch.min.js" />
     <Content Include="Scripts\AngularJS\angular.js" />
     <Content Include="Scripts\AngularJS\angular.min.js" />
+    <Content Include="Scripts\app\courseTaken\courseTaken.controller.js" />
+    <Content Include="Scripts\app\courseTaken\courseTaken.module.js" />
+    <Content Include="Scripts\app\courseTaken\courseTaken.service.js" />
+    <Content Include="Scripts\app\course\course.controller.js" />
+    <Content Include="Scripts\app\course\course.module.js" />
+    <Content Include="Scripts\app\course\course.service.js" />
+    <Content Include="Scripts\app\shared\date.service.js" />
     <Content Include="Scripts\app\shared\guid.service.js" />
     <Content Include="Scripts\app\shared\promise.service.js" />
     <Content Include="Scripts\app\shared\shared.module.js" />
+    <Content Include="Scripts\app\student\student.controller.js" />
     <Content Include="Scripts\app\student\student.service.js" />
     <Content Include="Scripts\app\student\student.module.js" />
     <Content Include="Scripts\Bootstrap\bootstrap.js" />
@@ -222,7 +230,11 @@
     <Content Include="Views\Web.config" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Scripts\AngularJS\version.json" />
-    <Content Include="Views\Students.cshtml" />
+    <Content Include="Views\Students\Index.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Courses\Index.cshtml" />
+    <Content Include="Views\CoursesTaken\Student.cshtml" />
+    <Content Include="Views\CoursesTaken\Course.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -234,6 +246,10 @@
     <ProjectReference Include="..\Domain\CourseCentral.Domain.csproj">
       <Project>{c8036e95-d6dc-4ab4-b040-a458307c0a72}</Project>
       <Name>CourseCentral.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IoC\CourseCentral.IoC.csproj">
+      <Project>{807db23f-17e6-445a-8ff5-c0cb07895d9d}</Project>
+      <Name>CourseCentral.IoC</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

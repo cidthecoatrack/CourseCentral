@@ -1,0 +1,92 @@
+﻿@{
+    @model CourseCentral.Web.Models.CoursesModel
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section ngApp {
+    ng-app='app.course'
+}
+
+@section Scripts {
+    <script type="text/javascript" src="~/Scripts/app/course/course.module.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/course/course.service.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/course/course.controller.js"></script>
+}
+
+<div ng-controller="Course as vm">
+    <h1>Courses</h1>
+    <div ng-show="vm.editingCourse">
+        <form name="courseEditForm" role="form" ng-submit="vm.save()">
+            <div class="form-group">
+                <label for="nameInput">Name</label>
+                <input type="text" class="form-control" id="nameInput" placeholder="Name" ng-model="vm.courseInEdit.Name" required>
+            </div>
+            <div class="form-group">
+                <label for="departmentInput">Department</label>
+                <input type="text" class="form-control" id="departmentInput" ng-minlength="4" ng-maxlength="4" placeholder="Department" ng-model="vm.courseInEdit.Department" required>
+            </div>
+            <div class="form-group">
+                <label for="numberInput">Number</label>
+                <input type="number" class="form-control" min="1" id="numberInput" ng-model="vm.courseInEdit.Number" required>
+            </div>
+            <div class="form-group">
+                <label for="sectionInput">Section</label>
+                <select id="sectionInput" class="form-control" ng-model="vm.courseInEdit.Section" ng-options="section for section in vm.sections" required></select>
+            </div>
+            <div class="form-group">
+                <label for="professorInput">Professor</label>
+                <input type="text" class="form-control" id="professorInput" ng-model="vm.courseInEdit.Professor" placeholder="Professor" required>
+            </div>
+            <div class="form-group">
+                <label for="yearInput">Year</label>
+                <input type="number" class="form-control" id="yearInput" min="1000" ng-model="vm.courseInEdit.Year" required>
+            </div>
+            <div class="form-group">
+                <label for="semesterInput">Semester</label>
+                <select id="semesterInput" class="form-control" ng-model="vm.courseInEdit.Semester" ng-options="semester for semester in vm.semesters" required></select>
+            </div>
+            <button type="submit" class="btn btn-success" ng-disabled="courseEditForm.$invalid || vm.duplicateCourseInEdit">Save</button>
+            <button class="btn" ng-click="vm.cancel()">Cancel</button>
+            <button class="btn btn-danger" ng-click="vm.remove()" ng-show="vm.courseInEdit.Id.length > 0">Remove</button>
+        </form>
+    </div>
+    <div ng-hide="vm.editingCourse">
+        <table class="table table-striped">
+            <tr>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Number</th>
+                <th>Section</th>
+                <th>Professor</th>
+                <th>Year</th>
+                <th>Semester</th>
+                <th></th>
+                <th></th>
+            </tr>
+            <tr ng-repeat="course in vm.courses">
+                <td>{{ course.Name }}</td>
+                <td>{{ course.Department }}</td>
+                <td>{{ course.Number }}</td>
+                <td>{{ course.Section }}</td>
+                <td>{{ course.Professor }}</td>
+                <td>{{ course.Year }}</td>
+                <td>{{ course.Semester }}</td>
+                <td>
+                    <button class="btn" ng-click="vm.edit($index)">Edit</button>
+                </td>
+                <td>
+                    <a class="btn btn-default" href="~/CoursesTaken/Course/{{course.Id}}" role="button">Add Students</a>
+                </td>
+            </tr>
+        </table>
+        <button class="btn btn-success" ng-click="vm.edit()">Add</button>
+    </div>
+</div>
+
+@section PostBodyScripts {
+    <script type="text/javascript">
+        angular.module('app.course').factory('bootstrapData', function () {
+            return { model: @Html.Raw(Json.Encode(Model)) };
+        });
+    </script>
+}

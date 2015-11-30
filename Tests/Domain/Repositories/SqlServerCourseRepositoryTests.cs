@@ -217,7 +217,9 @@ namespace CourseCentral.Tests.Domain.Repositories
         {
             var newStudent = CreateStudent();
             var newCourse = CreateCourse();
-            var newCourseTaken = new CourseTakenModel { Student = newStudent.Id, Course = newCourse.Id, Grade = 9266 };
+            var newCourseTaken = new CourseTakenModel { Grade = 9266 };
+            newCourseTaken.Student = new NameModel { Id = newStudent.Id, Name = newStudent.FirstName };
+            newCourseTaken.Course = new NameModel { Id = newCourse.Id, Name = newCourse.Name };
             CourseTakenRepository.Add(newCourseTaken);
 
             Assert.That(() => CourseRepository.Remove(newCourse.Id), Throws.Exception);
@@ -226,16 +228,20 @@ namespace CourseCentral.Tests.Domain.Repositories
             var course = courses.First(c => c.Id == newCourse.Id);
             AssertCoursesAreEqual(course, newCourse);
 
-            var coursesTaken = CourseTakenRepository.FindCourses(newCourseTaken.Student);
-            var courseTaken = coursesTaken.First(c => c.Course == newCourseTaken.Course);
-            Assert.That(courseTaken.Course, Is.EqualTo(newCourseTaken.Course));
-            Assert.That(courseTaken.Student, Is.EqualTo(newCourseTaken.Student));
+            var coursesTaken = CourseTakenRepository.FindCourses(newCourseTaken.Student.Id);
+            var courseTaken = coursesTaken.First(c => c.Course.Id == newCourseTaken.Course.Id);
+            Assert.That(courseTaken.Course.Id, Is.EqualTo(newCourseTaken.Course.Id));
+            Assert.That(courseTaken.Course.Name, Is.EqualTo(newCourseTaken.Course.Name));
+            Assert.That(courseTaken.Student.Id, Is.EqualTo(newCourseTaken.Student.Id));
+            Assert.That(courseTaken.Student.Name, Is.EqualTo(newCourseTaken.Student.Name));
             Assert.That(courseTaken.Grade, Is.EqualTo(newCourseTaken.Grade));
 
-            coursesTaken = CourseTakenRepository.FindStudents(newCourseTaken.Course);
-            courseTaken = coursesTaken.First(c => c.Student == newCourseTaken.Student);
-            Assert.That(courseTaken.Course, Is.EqualTo(newCourseTaken.Course));
-            Assert.That(courseTaken.Student, Is.EqualTo(newCourseTaken.Student));
+            coursesTaken = CourseTakenRepository.FindStudents(newCourseTaken.Course.Id);
+            courseTaken = coursesTaken.First(c => c.Student.Id == newCourseTaken.Student.Id);
+            Assert.That(courseTaken.Course.Id, Is.EqualTo(newCourseTaken.Course.Id));
+            Assert.That(courseTaken.Course.Name, Is.EqualTo(newCourseTaken.Course.Name));
+            Assert.That(courseTaken.Student.Id, Is.EqualTo(newCourseTaken.Student.Id));
+            Assert.That(courseTaken.Student.Name, Is.EqualTo(newCourseTaken.Student.Name));
             Assert.That(courseTaken.Grade, Is.EqualTo(newCourseTaken.Grade));
         }
 

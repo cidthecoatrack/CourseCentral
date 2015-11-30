@@ -17,10 +17,11 @@ namespace CourseCentral.Tests.Web.App_Start
             RouteConfig.RegisterRoutes(routes);
         }
 
-        [TestCase("Views", "{controller}", "Home", "Index")]
+        [TestCase("Default", "{controller}/{action}", "Home", "Index")]
         [TestCase("Students", "Students/{action}", "Students", "Index")]
         [TestCase("Courses", "Courses/{action}", "Courses", "Index")]
-        [TestCase("CoursesTaken", "CoursesTaken/{action}/{id}", "CoursesTaken", "Student")]
+        [TestCase("CoursesTaken", "CoursesTaken/{action}", "CoursesTaken", "Add")]
+        [TestCase("CoursesTakenViews", "CoursesTaken/{action}/{id}", "CoursesTaken", "Student")]
         public void RouteIsMapped(String name, String url, String controller, String action)
         {
             Assert.That(routes[name], Is.InstanceOf<Route>());

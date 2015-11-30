@@ -39,9 +39,9 @@ namespace CourseCentral.Web.Controllers
         }
 
         [HttpPost]
-        public void Remove(Guid studentId)
+        public void Remove(Guid courseId)
         {
-            courseService.Remove(studentId);
+            courseService.Remove(courseId);
         }
     }
 }

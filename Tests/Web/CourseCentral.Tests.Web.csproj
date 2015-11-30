@@ -111,7 +111,12 @@
     <Content Include="App.config" />
     <Content Include="Content\jasmine\jasmine.css" />
     <Content Include="Content\jasmine\jasmine_favicon.png" />
+    <Content Include="Scripts\app\courseTaken\courseTaken.controller.spec.js" />
+    <Content Include="Scripts\app\courseTaken\courseTaken.service.spec.js" />
+    <Content Include="Scripts\app\course\course.controller.spec.js" />
+    <Content Include="Scripts\app\course\course.service.spec.js" />
     <Content Include="Scripts\app\shared\guid.service.spec.js" />
+    <Content Include="Scripts\app\student\student.controller.spec.js" />
     <Content Include="Scripts\app\student\student.service.spec.js" />
     <Content Include="Scripts\boot.js" />
     <Content Include="Scripts\console.js" />

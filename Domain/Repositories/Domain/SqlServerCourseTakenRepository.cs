@@ -20,8 +20,8 @@ namespace CourseCentral.Domain.Repositories.Domain
 
             var parameters = new[]
             {
-                new SqlParameter("@Student", courseTaken.Student),
-                new SqlParameter("@Course", courseTaken.Course),
+                new SqlParameter("@Student", courseTaken.Student.Id),
+                new SqlParameter("@Course", courseTaken.Course.Id),
                 new SqlParameter("@Grade", courseTaken.Grade)
             };
 
@@ -32,8 +32,11 @@ namespace CourseCentral.Domain.Repositories.Domain
 
         public IEnumerable<CourseTakenModel> FindCourses(Guid student)
         {
-            var sql = @"SELECT * FROM CoursesTaken
-                        WHERE Student = @Student";
+            var sql = @"SELECT ct.Course, ct.Student, ct.Grade, s.FirstName, c.Name
+                        FROM CoursesTaken ct
+                        INNER JOIN Courses c ON ct.Course = c.Id
+                        INNER JOIN Students s ON ct.Student = s.Id
+                        WHERE ct.Student = @Student";
 
             var coursesTaken = new List<CourseTakenModel>();
             var parameter = new SqlParameter("@Student", student);
@@ -45,8 +48,10 @@ namespace CourseCentral.Domain.Repositories.Domain
                 while (reader.Read())
                 {
                     var courseTaken = new CourseTakenModel();
-                    courseTaken.Student = Guid.Parse(Convert.ToString(reader["Student"]));
-                    courseTaken.Course = Guid.Parse(Convert.ToString(reader["Course"]));
+                    courseTaken.Student.Id = Guid.Parse(Convert.ToString(reader["Student"]));
+                    courseTaken.Student.Name = Convert.ToString(reader["FirstName"]);
+                    courseTaken.Course.Id = Guid.Parse(Convert.ToString(reader["Course"]));
+                    courseTaken.Course.Name = Convert.ToString(reader["Name"]);
                     courseTaken.Grade = Convert.ToInt32(reader["Grade"]);
 
                     coursesTaken.Add(courseTaken);
@@ -58,8 +63,11 @@ namespace CourseCentral.Domain.Repositories.Domain
 
         public IEnumerable<CourseTakenModel> FindStudents(Guid course)
         {
-            var sql = @"SELECT * FROM CoursesTaken
-                        WHERE Course = @Course";
+            var sql = @"SELECT ct.Course, ct.Student, ct.Grade, s.FirstName, c.Name
+                        FROM CoursesTaken ct
+                        INNER JOIN Courses c ON ct.Course = c.Id
+                        INNER JOIN Students s ON ct.Student = s.Id
+                        WHERE ct.Course = @Course";
 
             var coursesTaken = new List<CourseTakenModel>();
             var parameter = new SqlParameter("@Course", course);
@@ -71,8 +79,10 @@ namespace CourseCentral.Domain.Repositories.Domain
                 while (reader.Read())
                 {
                     var courseTaken = new CourseTakenModel();
-                    courseTaken.Student = Guid.Parse(Convert.ToString(reader["Student"]));
-                    courseTaken.Course = Guid.Parse(Convert.ToString(reader["Course"]));
+                    courseTaken.Student.Id = Guid.Parse(Convert.ToString(reader["Student"]));
+                    courseTaken.Student.Name = Convert.ToString(reader["FirstName"]);
+                    courseTaken.Course.Id = Guid.Parse(Convert.ToString(reader["Course"]));
+                    courseTaken.Course.Name = Convert.ToString(reader["Name"]);
                     courseTaken.Grade = Convert.ToInt32(reader["Grade"]);
 
                     coursesTaken.Add(courseTaken);
@@ -91,8 +101,8 @@ namespace CourseCentral.Domain.Repositories.Domain
 
             var parameters = new[]
             {
-                new SqlParameter("@Student", courseTaken.Student),
-                new SqlParameter("@Course", courseTaken.Course)
+                new SqlParameter("@Student", courseTaken.Student.Id),
+                new SqlParameter("@Course", courseTaken.Course.Id)
             };
 
             using (var connection = GetAndOpenConnection())
@@ -110,8 +120,8 @@ namespace CourseCentral.Domain.Repositories.Domain
 
             var parameters = new[]
             {
-                new SqlParameter("@Student", courseTaken.Student),
-                new SqlParameter("@Course", courseTaken.Course),
+                new SqlParameter("@Student", courseTaken.Student.Id),
+                new SqlParameter("@Course", courseTaken.Course.Id),
                 new SqlParameter("@Grade", courseTaken.Grade)
             };
 

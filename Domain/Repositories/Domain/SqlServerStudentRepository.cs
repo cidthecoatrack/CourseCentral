@@ -14,6 +14,12 @@ namespace CourseCentral.Domain.Repositories.Domain
 
         public void Add(StudentModel student)
         {
+            if (student.MiddleName == null)
+                student.MiddleName = String.Empty;
+
+            if (student.Suffix == null)
+                student.Suffix = String.Empty;
+
             var sql = @"
                 INSERT INTO Students (Id, FirstName, MiddleName, LastName, Suffix, DateOfBirth)
                 VALUES (@Id, @FirstName, @MiddleName, @LastName, @Suffix, @DateOfBirth)";
@@ -74,6 +80,12 @@ namespace CourseCentral.Domain.Repositories.Domain
 
         public void Update(StudentModel student)
         {
+            if (student.MiddleName == null)
+                student.MiddleName = String.Empty;
+
+            if (student.Suffix == null)
+                student.Suffix = String.Empty;
+
             var sql = @"
                 UPDATE Students
                 SET

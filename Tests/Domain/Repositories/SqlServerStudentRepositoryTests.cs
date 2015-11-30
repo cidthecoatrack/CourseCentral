@@ -136,6 +136,22 @@ namespace CourseCentral.Tests.Domain.Repositories
         }
 
         [Test]
+        public void HandleNullValuesOnAdd()
+        {
+            var newStudent = new StudentModel();
+            newStudent.Id = Guid.NewGuid();
+            newStudent.FirstName = String.Format("First Name {0}", newStudent.Id);
+            newStudent.LastName = String.Format("Last Name {0}", newStudent.Id);
+            newStudent.DateOfBirth = DateTime.Now.Date;
+
+            StudentRepository.Add(newStudent);
+
+            var students = StudentRepository.FindAll();
+            var student = students.First(s => s.Id == newStudent.Id);
+            AssertStudentsAreEqual(student, newStudent);
+        }
+
+        [Test]
         public void CannotAddDuplicateStudentId()
         {
             var student = CreateStudent();
@@ -177,7 +193,9 @@ namespace CourseCentral.Tests.Domain.Repositories
         {
             var newStudent = CreateStudent();
             var newCourse = CreateCourse();
-            var newCourseTaken = new CourseTakenModel { Student = newStudent.Id, Course = newCourse.Id, Grade = Random.Next() };
+            var newCourseTaken = new CourseTakenModel { Grade = 9266 };
+            newCourseTaken.Student = new NameModel { Id = newStudent.Id, Name = newStudent.FirstName };
+            newCourseTaken.Course = new NameModel { Id = newCourse.Id, Name = newCourse.Name };
             CourseTakenRepository.Add(newCourseTaken);
 
             Assert.That(() => StudentRepository.Remove(newStudent.Id), Throws.Exception);
@@ -186,16 +204,20 @@ namespace CourseCentral.Tests.Domain.Repositories
             var student = students.First(s => s.Id == newStudent.Id);
             AssertStudentsAreEqual(student, newStudent);
 
-            var coursesTaken = CourseTakenRepository.FindCourses(newCourseTaken.Student);
-            var courseTaken = coursesTaken.First(c => c.Course == newCourseTaken.Course);
-            Assert.That(courseTaken.Course, Is.EqualTo(newCourseTaken.Course));
-            Assert.That(courseTaken.Student, Is.EqualTo(newCourseTaken.Student));
+            var coursesTaken = CourseTakenRepository.FindCourses(newCourseTaken.Student.Id);
+            var courseTaken = coursesTaken.First(c => c.Course.Id == newCourseTaken.Course.Id);
+            Assert.That(courseTaken.Course.Id, Is.EqualTo(newCourseTaken.Course.Id));
+            Assert.That(courseTaken.Course.Name, Is.EqualTo(newCourseTaken.Course.Name));
+            Assert.That(courseTaken.Student.Id, Is.EqualTo(newCourseTaken.Student.Id));
+            Assert.That(courseTaken.Student.Name, Is.EqualTo(newCourseTaken.Student.Name));
             Assert.That(courseTaken.Grade, Is.EqualTo(newCourseTaken.Grade));
 
-            coursesTaken = CourseTakenRepository.FindStudents(newCourseTaken.Course);
-            courseTaken = coursesTaken.First(c => c.Student == newCourseTaken.Student);
-            Assert.That(courseTaken.Course, Is.EqualTo(newCourseTaken.Course));
-            Assert.That(courseTaken.Student, Is.EqualTo(newCourseTaken.Student));
+            coursesTaken = CourseTakenRepository.FindStudents(newCourseTaken.Course.Id);
+            courseTaken = coursesTaken.First(c => c.Student.Id == newCourseTaken.Student.Id);
+            Assert.That(courseTaken.Course.Id, Is.EqualTo(newCourseTaken.Course.Id));
+            Assert.That(courseTaken.Course.Name, Is.EqualTo(newCourseTaken.Course.Name));
+            Assert.That(courseTaken.Student.Id, Is.EqualTo(newCourseTaken.Student.Id));
+            Assert.That(courseTaken.Student.Name, Is.EqualTo(newCourseTaken.Student.Name));
             Assert.That(courseTaken.Grade, Is.EqualTo(newCourseTaken.Grade));
         }
 
@@ -218,6 +240,23 @@ namespace CourseCentral.Tests.Domain.Repositories
             newStudent.MiddleName = "New middle name";
             newStudent.LastName = "New last name";
             newStudent.Suffix = "New suffix";
+            newStudent.DateOfBirth = new DateTime(1989, 10, 29);
+
+            StudentRepository.Update(newStudent);
+
+            var students = StudentRepository.FindAll();
+            var student = students.First(s => s.Id == newStudent.Id);
+            AssertStudentsAreEqual(student, newStudent);
+        }
+
+        [Test]
+        public void HandleNullValuesOnUpdate()
+        {
+            var newStudent = CreateStudent();
+            newStudent.FirstName = "New first name";
+            newStudent.MiddleName = null;
+            newStudent.LastName = "New last name";
+            newStudent.Suffix = null;
             newStudent.DateOfBirth = new DateTime(1989, 10, 29);
 
             StudentRepository.Update(newStudent);

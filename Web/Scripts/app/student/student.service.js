@@ -16,17 +16,17 @@
 
         function add(student) {
             var body = { student: student };
-            promiseService.postPromise('Students/Add', body);
+            return promiseService.postPromise('/Students/Add', body);
         }
 
         function update(student) {
             var body = { student: student };
-            promiseService.postPromise('Students/Update', body);
+            return promiseService.postPromise('/Students/Update', body);
         }
 
         function remove(studentId) {
             var body = { studentId: studentId };
-            promiseService.postPromise('Students/Remove', body);
+            return promiseService.postPromise('/Students/Remove', body);
         }
     }
 }))();

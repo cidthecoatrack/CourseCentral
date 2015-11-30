@@ -1,0 +1,59 @@
+﻿@{
+    @model CourseCentral.Web.Models.CoursesTakenModel
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section ngApp {
+    ng-app='app.courseTaken'
+}
+
+@section Scripts {
+    <script type="text/javascript" src="~/Scripts/app/courseTaken/courseTaken.module.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/courseTaken/courseTaken.service.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/courseTaken/courseTaken.controller.js"></script>
+}
+
+<div ng-controller="CourseTaken as vm">
+    <h1>Courses for {{vm.student.Name}}</h1>
+    <div ng-show="vm.editingCourseTaken">
+        <form name="courseTakenEditForm" role="form">
+            <div class="form-group">
+                <label ng-hide="vm.editIndex > -1" for="courseInput">Course</label>
+                <select ng-hide="vm.editIndex > -1" id="courseInput" class="form-control" ng-model="vm.courseTakenInEdit.Course" ng-options="course.Name for course in vm.toAssign" required></select>
+                <p class="form-control-static" ng-show="vm.editIndex > -1">{{vm.courseTakenInEdit.Course.Name}}</p>
+            </div>
+            <div class="form-group">
+                <label for="gradeInput">Grade</label>
+                <input type="number" class="form-control" id="gradeInput" min="0" ng-model="vm.courseTakenInEdit.Grade" required>
+            </div>
+            <button class="btn btn-success" ng-click="vm.save()" ng-disabled="courseTakenEditForm.$invalid">Save</button>
+            <button class="btn" ng-click="vm.cancel()">Cancel</button>
+            <button class="btn btn-danger" ng-click="vm.remove()" ng-show="vm.editIndex > -1">Remove</button>
+        </form>
+    </div>
+    <div ng-hide="vm.editingCourseTaken">
+        <table class="table table-striped">
+            <tr>
+                <th>Course</th>
+                <th>Grade</th>
+                <th></th>
+            </tr>
+            <tr ng-repeat="courseTaken in vm.coursesTaken">
+                <td>{{ courseTaken.Course.Name }}</td>
+                <td>{{ courseTaken.Grade }}</td>
+                <td>
+                    <button class="btn" ng-click="vm.edit($index)">Edit</button>
+                </td>
+            </tr>
+        </table>
+        <button class="btn btn-success" ng-click="vm.edit()">Add</button>
+    </div>
+</div>
+
+@section PostBodyScripts {
+    <script type="text/javascript">
+        angular.module('app.courseTaken').factory('bootstrapData', function () {
+            return { model: @Html.Raw(Json.Encode(Model)) };
+        });
+    </script>
+}
